@@ -1,6 +1,6 @@
 # OpenAI Integration Setup
 
-Your Surgery Abroad Assistant is now ready! Here's how to complete the setup:
+Your PJ – Psychotherapist Assistant is now ready! Here's how to complete the setup:
 
 ## 🔑 **1. Get Your OpenAI API Key**
 
@@ -45,8 +45,8 @@ MONGODB_URI=mongodb+srv://user:pass@cluster/dbname
 
 ### **Text Chat:**
 1. Go to `http://localhost:3000`
-2. Try asking: "What plastic surgery procedures are available in Lithuania?"
-3. The Surgery Abroad Assistant will respond with information about medical tourism
+2. Try: "How have you been feeling lately — emotionally or mentally?"
+3. PJ will respond with CBT-oriented support
 
 ### **Voice Mode (Conversational Speech-to-Speech):**
 1. Click the "🎤 Voice Mode" button

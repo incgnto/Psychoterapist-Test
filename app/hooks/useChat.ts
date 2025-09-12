@@ -38,7 +38,7 @@ export function useChat() {
       setIsLoading(true)
 
       // Extract user info from URL query params
-      let email = 'guest@surgery.com', username = 'guest', fullname = 'Guest User';
+      let email = 'guest@pj.com', username = 'guest', fullname = 'Guest User';
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search)
         email = params.get('email') || email

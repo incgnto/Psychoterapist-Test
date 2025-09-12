@@ -9,17 +9,17 @@ NEXTAUTH_URL=http://localhost:3000
 ```
 
 Replace `your-google-client-id` and `your-google-client-secret` with values from your Google Cloud Console.
-# Surgery Abroad - Medical Tourism Chatbot
+# PJ – Psychotherapist (CBT) Assistant
 
-A sophisticated chatbot application for medical tourism, specifically focused on plastic surgery and medical procedures in Lithuania. Features include intelligent conversation flow, voice mode, and comprehensive information about medical tourism options.
+An AI psychotherapist assistant focused on Cognitive Behavioral Therapy (CBT). It offers warm, empathetic conversation, reflective questions, and structured CBT tools (thought records, distortions, behavioral activation, habit tracking). Includes voice mode, responsive UI, and safe boundaries.
 
 ## Features
 
 - 🤖 **AI-Powered Chat**: Intelligent responses using OpenAI's GPT-4
 - 🎤 **Voice Mode**: Full speech-to-speech conversation support
 - 📱 **Responsive Design**: Works perfectly on desktop and mobile
-- 🏥 **Medical Tourism Focus**: Specialized knowledge about procedures in Lithuania
-- 💬 **Smart Conversation Flow**: Collects contact info and guides users through decision process
+- 🧠 **CBT Focus**: Thought records, cognitive distortions, behavioral activation, SMART goals
+- 💬 **Supportive Flow**: Gentle check-ins, reflective summaries, and optional structured exercises
 - 🔒 **GDPR Compliant**: Proper consent handling for data collection
 
 ## Quick Start
@@ -28,7 +28,7 @@ A sophisticated chatbot application for medical tourism, specifically focused on
 
 ```bash
 git clone <your-repo-url>
-cd surgery_005
+cd pj-psychotherapist
 npm install
 ```
 
@@ -171,16 +171,15 @@ Notes:
 - If `ELEVENLABS_API_KEY` is not set, voice playback falls back to browser TTS where available.
 - For remote images in assistant messages, `next.config.mjs` allows any host by default. Restrict `images.remotePatterns` for production hardening.
 
-## Medical Disclaimer
+## Safety Disclaimer
 
-This application provides general information about medical tourism and procedures. It does not:
+This assistant provides emotional support and CBT-oriented guidance only. It does not:
 
-- Provide specific medical advice
-- Make diagnoses or treatment recommendations
-- Replace professional medical consultations
-- Guarantee treatment outcomes
+- Provide diagnosis or medical/psychiatric treatment
+- Replace licensed mental health care
+- Advise on medication changes
 
-Always consult with qualified medical professionals for personal medical advice.
+If you are in crisis or considering self-harm, please contact local emergency services or a licensed mental health professional immediately.
 
 ## Support
 

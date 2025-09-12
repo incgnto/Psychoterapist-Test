@@ -130,7 +130,7 @@ export default function ChatMessage({ message, isStreaming = false }: ChatMessag
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-xs sm:text-sm font-medium text-gray-900">
-            {isUser ? 'You' : 'Surgery Abroad Assistant'}
+            {isUser ? 'You' : 'PJ – Psychotherapist'}
           </span>
           <span className="text-xs text-gray-500">
             {(() => {
@@ -208,7 +208,7 @@ function MessageContent({ content }: { content: string }) {
           )
         }
         
-        if (paragraph.includes('**Next step:**') || paragraph.includes('surgery-quiz')) {
+        if (paragraph.includes('**Next step:**')) {
           return (
             <div key={index} className="p-2 sm:p-3 bg-green-50 border-l-4 border-green-400 rounded-r">
               <FormattedText text={paragraph} />
@@ -216,7 +216,7 @@ function MessageContent({ content }: { content: string }) {
           )
         }
         
-        if (paragraph.includes('📍') || paragraph.includes('💶') || paragraph.includes('🇱🇹')) {
+        if (paragraph.includes('🧠') || paragraph.includes('📝') || paragraph.includes('💭')) {
           return (
             <div key={index} className="p-2 sm:p-3 bg-gray-50 rounded border">
               <FormattedText text={paragraph} />

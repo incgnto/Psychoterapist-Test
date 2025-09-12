@@ -9,10 +9,10 @@ import { useChat } from '@/app/hooks/useChat'
 // Removed next-auth session import
 
 const suggestedQuestions = [
-  "What are the top-rated plastic surgery clinics in Lithuania and what makes them special?",
-  "How much can I save by getting cosmetic procedures in Lithuania compared to other countries?",
-  "What's the complete process from consultation to recovery when getting surgery abroad?",
-  "Which procedures are Lithuania's specialty and what are the success rates?"
+  "How have you been feeling lately — emotionally or mentally?",
+  "Is there a recurring thought that’s been stressful for you recently?",
+  "Would you like to try a quick CBT thought record together?",
+  "What small habit could support your mood this week (e.g., journaling, breathing)?"
 ]
 
 interface ChatMainProps {
@@ -738,27 +738,27 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
       <div className="bg-white border-b border-gray-200 p-4">
         <div className="flex items-center justify-center">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-              <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
                 <div className="w-2 h-2 bg-white rounded-full"></div>
               </div>
             </div>
             <h1 className="text-lg sm:text-xl font-semibold text-gray-800">
-              SURGERY<span className="text-green-500">ABROAD</span>
+              PJ <span className="text-blue-600">Psychotherapist</span>
             </h1>
           </div>
         </div>
         
         {/* 24/7 Availability and features - Mobile responsive */}
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-2">
-          <span className="text-xs sm:text-sm text-purple-600 flex items-center gap-1">
-            🟣 24/7 Availability
+          <span className="text-xs sm:text-sm text-blue-700 flex items-center gap-1">
+            🟢 CBT‑based guidance
           </span>
           <span className="text-xs sm:text-sm text-gray-600 flex items-center gap-1">
-            ⚡ Instant Replies
+            ⚡ Thoughtful, instant replies
           </span>
           <span className="text-xs sm:text-sm text-gray-600 items-center gap-1 sm:flex">
-            ✨ Beta Version
+            ✨ Emotional support, not clinical care
           </span>
           <button
             onClick={() => setIsVoiceModeOpen(true)}
@@ -778,16 +778,16 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
               {/* Logo and Welcome Text */}
               <div className="text-center mb-6 sm:mb-8">
                 <div className="flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center">
                       <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full"></div>
                     </div>
                   </div>
                 </div>
                 <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
-                  SURGERY<span className="text-green-500">ABROAD</span>
+                  PJ <span className="text-blue-600">Psychotherapist Test</span>
                 </h2>
-                <p className="text-sm sm:text-base text-gray-600 px-4">Choose a question to start or type your own below.</p>
+                <p className="text-sm sm:text-base text-gray-600 px-4">I use CBT to help you notice and shift unhelpful patterns. Choose a question to start or type your own below.</p>
               </div>
 
               {/* Suggested Questions */}
@@ -868,7 +868,7 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={isDragOver ? "Drop files here..." : "Ask me about clinics, procedures, or medical tourism..."}
+                placeholder={isDragOver ? "Drop files here..." : "Share how you’re feeling, or ask for a CBT exercise..."}
                 className="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-24 sm:pr-32 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm sm:text-base"
                 rows={1}
                 style={{ minHeight: '44px', maxHeight: '120px' }}

@@ -41,7 +41,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
             </div>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Something went wrong</h2>
             <p className="text-gray-600 mb-4">
-              An error occurred while loading the Surgery Abroad Assistant. Please refresh the page to try again.
+              An error occurred while loading the PJ Psychotherapist Assistant. Please refresh the page to try again.
             </p>
             <button
               onClick={() => window.location.reload()}

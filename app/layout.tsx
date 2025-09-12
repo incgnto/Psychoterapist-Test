@@ -4,8 +4,8 @@ import type { Metadata } from 'next'
 import Providers from './providers'
 
 export const metadata: Metadata = {
-  title: 'Surgery Abroad - Medical Tourism Chatbot',
-  description: 'Get information about medical tourism and surgical procedures abroad',
+  title: 'PJ – Psychotherapist (CBT) Assistant',
+  description: 'Warm, CBT-based support to explore thoughts, emotions, and behaviors',
 }
 
 export default function RootLayout({

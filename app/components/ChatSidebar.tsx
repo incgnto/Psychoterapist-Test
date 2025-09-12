@@ -22,7 +22,7 @@ export default function ChatSidebar({ isOpen, onToggle, onNewChat, onSelectChat 
       setLoading(true)
       // Get user email from query param or use guest
       const params = new URLSearchParams(window.location.search)
-      const email = params.get('email') || 'guest@surgery.com'
+      const email = params.get('email') || 'guest@pj.com'
       const res = await fetch(`/api/chat-history?email=${email}`)
       const data = await res.json()
       setChatHistory(data.sessions || [])
@@ -46,7 +46,7 @@ export default function ChatSidebar({ isOpen, onToggle, onNewChat, onSelectChat 
       {/* Header */}
       <div className="p-3 sm:p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-3 sm:mb-4">
-          <h2 className="text-base sm:text-lg font-semibold text-gray-800">Chat History</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800">Sessions</h2>
           <button
             onClick={onToggle}
             className="p-1 hover:bg-gray-100 rounded transition-colors lg:hidden"
@@ -59,7 +59,7 @@ export default function ChatSidebar({ isOpen, onToggle, onNewChat, onSelectChat 
           className="w-full flex items-center justify-center gap-2 px-3 py-2 sm:px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
         >
           <Plus className="w-4 h-4" />
-          New Chat
+          New Session
         </button>
   {/* Removed login/logout buttons */}
       </div>

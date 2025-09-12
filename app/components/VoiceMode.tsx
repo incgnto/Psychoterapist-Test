@@ -836,8 +836,8 @@ export default function VoiceMode({ isOpen, onClose }: VoiceModeProps) {
             <div className="text-sm text-gray-400">
               {voiceState === 'idle' && !isConversationActive && 'Start a real-time voice conversation'}
               {voiceState === 'idle' && isConversationActive && "Just start speaking - I'll listen automatically"}
-              {voiceState === 'listening' && 'Ask about medical tourism in Lithuania'}
-              {voiceState === 'thinking' && 'Consulting Surgery Abroad Assistant...'}
+              {voiceState === 'listening' && 'Listening — how are you feeling?'}
+              {voiceState === 'thinking' && 'Reflecting through a CBT lens...'}
               {voiceState === 'speaking' && (isMuted ? 'Response ready (muted) - Will listen after' : 'Tap stop to interrupt')}
             </div>
           </div>
