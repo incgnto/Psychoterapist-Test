@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import Providers from './providers'
 
 export const metadata: Metadata = {
-  title: 'PJ – Psychotherapist (CBT) Assistant',
+  title: 'Your AI Therapy Guide',
   description: 'Warm, CBT-based support to explore thoughts, emotions, and behaviors',
 }
 

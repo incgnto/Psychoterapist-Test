@@ -9,10 +9,10 @@ import { useChat } from '@/app/hooks/useChat'
 // Removed next-auth session import
 
 const suggestedQuestions = [
-  "How have you been feeling lately — emotionally or mentally?",
-  "Is there a recurring thought that’s been stressful for you recently?",
-  "Would you like to try a quick CBT thought record together?",
-  "What small habit could support your mood this week (e.g., journaling, breathing)?"
+  "I’m feeling anxious — can you help me calm down?",
+  "Something’s been on my mind — can we unpack it together?",
+  "I’d like to start my day with a positive check-in",
+  "Can you give me a small tip to feel better right now?"
 ]
 
 interface ChatMainProps {
@@ -744,7 +744,7 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
               </div>
             </div>
             <h1 className="text-lg sm:text-xl font-semibold text-gray-800">
-              PJ <span className="text-blue-600">Psychotherapist</span>
+              Your <span className="text-blue-600">AI Therapy Guide</span>
             </h1>
           </div>
         </div>
@@ -752,20 +752,14 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
         {/* 24/7 Availability and features - Mobile responsive */}
         <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-2">
           <span className="text-xs sm:text-sm text-blue-700 flex items-center gap-1">
-            🟢 CBT‑based guidance
+            ✅ Proven self-help tools
           </span>
           <span className="text-xs sm:text-sm text-gray-600 flex items-center gap-1">
-            ⚡ Thoughtful, instant replies
+            ✨ Safe space for your thoughts
           </span>
           <span className="text-xs sm:text-sm text-gray-600 items-center gap-1 sm:flex">
-            ✨ Emotional support, not clinical care
+            ⚡ Not medical or psychiatric advice
           </span>
-          <button
-            onClick={() => setIsVoiceModeOpen(true)}
-            className="text-xs sm:text-sm text-purple-600 hover:text-purple-700 flex items-center gap-1 transition-colors"
-          >
-            🎤 Voice Mode
-          </button>
         </div>
       </div>
 
@@ -785,9 +779,9 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
                   </div>
                 </div>
                 <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
-                  PJ <span className="text-blue-600">Psychotherapist Test</span>
+                  Your <span className="text-blue-600">AI Therapy Guide</span>
                 </h2>
-                <p className="text-sm sm:text-base text-gray-600 px-4">I use CBT to help you notice and shift unhelpful patterns. Choose a question to start or type your own below.</p>
+                <p className="text-sm sm:text-base text-gray-600 px-4">A caring companion that helps you talk through worries and find new perspectives.</p>
               </div>
 
               {/* Suggested Questions */}
@@ -868,7 +862,7 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={isDragOver ? "Drop files here..." : "Share how you’re feeling, or ask for a CBT exercise..."}
+                placeholder={isDragOver ? "Drop files here..." : "Type what’s on your mind…"}
                 className="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-24 sm:pr-32 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm sm:text-base"
                 rows={1}
                 style={{ minHeight: '44px', maxHeight: '120px' }}
