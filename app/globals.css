@@ -2,89 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light/dark tokens (optional) */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
+  color-scheme: light dark;
+
+  --foreground-rgb: 17, 24, 39;
+  --background-start-rgb: 250, 250, 250;
   --background-end-rgb: 255, 255, 255;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+/* Dark mode tokens */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 229, 231, 235;
+    --background-start-rgb: 10, 10, 11;
+    --background-end-rgb: 17, 17, 19;
+  }
 }
 
-html,
+/* Resets + base type */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  font-size: 15px;       /* calm reading size */
+  scroll-behavior: smooth;
+}
+
 body {
+  /* Tailwind maps font-sans -> var(--font-sans) from layout.tsx */
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, Segoe UI,
+               Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, sans-serif;
+
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+
   max-width: 100vw;
   overflow-x: hidden;
-}
 
-body {
-  @apply font-sans;
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
+  background:
+    linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb)))
     rgb(var(--background-start-rgb));
 }
 
-/* Voice Mode Animations */
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.8);
-    opacity: 1;
-  }
-  80%, 100% {
-    transform: scale(1.2);
-    opacity: 0;
-  }
-}
-
-@keyframes bounce-audio {
-  0%, 100% {
-    transform: scaleY(1);
-  }
-  50% {
-    transform: scaleY(2);
-  }
-}
-
-@keyframes speaking-pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-.animation-delay-100 {
-  animation-delay: 0.1s;
-}
-
-.animation-delay-150 {
-  animation-delay: 0.15s;
-}
-
-.animation-delay-200 {
-  animation-delay: 0.2s;
-}
-
-.animation-delay-300 {
-  animation-delay: 0.3s;
-}
-
-.animate-pulse-ring {
-  animation: pulse-ring 1.5s ease-out infinite;
-}
-
-.animate-bounce-audio {
-  animation: bounce-audio 1s ease-in-out infinite;
-}
-
-.animate-speaking-pulse {
-  animation: speaking-pulse 0.8s ease-in-out infinite;
-}
+/* (your existing animations/utilities can stay below) */

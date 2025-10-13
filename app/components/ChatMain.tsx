@@ -734,16 +734,22 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
 
   return (
     <div className="flex-1 flex flex-col">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4">
-        
-        {/* 24/7 Availability and features - Mobile responsive */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
-          <span className="text-xs text-gray-600 flex items-center gap-1">
-          Safe space for your thoughts 💭 | Not a medical or psychiatric advice.
-          </span>
-        </div>
-      </div>
+     {/* Header */}
+<div className="sticky top-0 z-40 bg-white border-b border-gray-200 p-4">
+  <div className="flex flex-wrap items-center justify-center text-center">
+    {/* Mobile version (shows below sm) */}
+    <div className="block sm:hidden text-[13px] text-gray-700 leading-relaxed">
+  <div>Safe space for your thoughts 💭</div>
+  <div className="text-gray-500 text-[12px]">Not a medical or psychiatric advice.</div>
+</div>
+
+
+    {/* Desktop / tablet version */}
+    <span className="hidden sm:flex text-xs text-gray-600 items-center gap-1">
+      Safe space for your thoughts 💭 | Not a medical or psychiatric advice.
+    </span>
+  </div>
+</div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -751,36 +757,50 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
           /* Welcome Screen */
           <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
             <div className="max-w-4xl w-full">
-              {/* Logo and Welcome Text */}
-              <div className="text-center mb-6 sm:mb-8">
-                {/* Simple Logo */}
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                      <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-                <h1 className="text-xl sm:text-3xl font-semibold text-gray-800 mb-2">
-                  Hello, how are you feeling today?
-                </h1>
-              </div>
+              {/* Logo and Welcome */}
+<div className="text-center mb-8 sm:mb-10">
+  {/* Simple Logo (softer, breathing space) */}
+  <div className="flex items-center justify-center mb-5">
+    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-sky-50 flex items-center justify-center">
+      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-sky-400/90 flex items-center justify-center shadow-sm">
+        <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white" />
+      </div>
+    </div>
+  </div>
 
-             {/* Suggested Questions */}
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+  <h1 className="text-[20px] sm:text-[28px] font-semibold text-slate-800 tracking-tight">
+    Hi—how are you feeling today?
+  </h1>
+  <p className="mt-2 text-sm sm:text-base text-slate-600">
+    I’m here to listen. Share as little or as much as you like.
+  </p>
+</div>
+
+{/* Suggested Questions */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-8">
   {suggestedQuestions.map((question, index) => (
     <button
       key={index}
       onClick={() => handleQuestionClick(question)}
       disabled={isLoading}
-      className="p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all text-left lg:text-center disabled:opacity-50 disabled:cursor-not-allowed"
+      className="
+        group w-full p-4 sm:p-5 text-left md:text-center
+        rounded-xl border border-slate-200 bg-white
+        shadow-[0_1px_0_rgba(0,0,0,0.03)]
+        transition-all
+        hover:bg-sky-50/60 hover:border-sky-200 hover:shadow
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300/70
+        disabled:opacity-50 disabled:cursor-not-allowed
+      "
+      aria-label={question}
     >
-      <span className="text-base text-gray-700 group-hover:text-blue-600 transition-colors leading-relaxed">
+      <span className="block text-[15px] sm:text-base leading-relaxed text-slate-700 transition-colors group-hover:text-slate-800">
         {question}
       </span>
     </button>
   ))}
 </div>
+
             </div>
           </div>
         ) : (

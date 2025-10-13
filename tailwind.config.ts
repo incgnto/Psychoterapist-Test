@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-sans)'],
+      },
       colors: {
         primary: {
           50: '#eff6ff',
@@ -21,18 +24,6 @@ const config: Config = {
           800: '#1e40af',
           900: '#1e3a8a',
         },
-      },
-      fontFamily: {
-        sans: [
-          '"Segoe UI Variable"',
-          '"Segoe UI"',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'Roboto',
-          '"Helvetica Neue"',
-          'Arial',
-          'sans-serif',
-        ],
       },
     },
   },
