@@ -736,29 +736,11 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
     <div className="flex-1 flex flex-col">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 p-4">
-        <div className="flex items-center justify-center">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-              </div>
-            </div>
-            <h1 className="text-lg sm:text-xl font-semibold text-gray-800">
-              Your <span className="text-blue-600">AI Therapy Guide</span>
-            </h1>
-          </div>
-        </div>
         
         {/* 24/7 Availability and features - Mobile responsive */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-2">
-          <span className="text-xs sm:text-sm text-blue-700 flex items-center gap-1">
-            ✅ Proven self-help tools
-          </span>
-          <span className="text-xs sm:text-sm text-gray-600 flex items-center gap-1">
-            ✨ Safe space for your thoughts
-          </span>
-          <span className="text-xs sm:text-sm text-gray-600 items-center gap-1 sm:flex">
-            ⚡ Not medical or psychiatric advice
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
+          <span className="text-xs text-gray-600 flex items-center gap-1">
+          Safe space for your thoughts 💭 | Not a medical or psychiatric advice.
           </span>
         </div>
       </div>
@@ -771,6 +753,7 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
             <div className="max-w-4xl w-full">
               {/* Logo and Welcome Text */}
               <div className="text-center mb-6 sm:mb-8">
+                {/* Simple Logo */}
                 <div className="flex items-center justify-center mb-4">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center">
@@ -778,32 +761,26 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
                     </div>
                   </div>
                 </div>
-                <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
-                  Your <span className="text-blue-600">AI Therapy Guide</span>
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600 px-4">A caring companion that helps you talk through worries and find new perspectives.</p>
+                <h1 className="text-xl sm:text-3xl font-semibold text-gray-800 mb-2">
+                  Hello, how are you feeling today?
+                </h1>
               </div>
 
-              {/* Suggested Questions */}
-              <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                {suggestedQuestions.map((question, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleQuestionClick(question)}
-                    disabled={isLoading}
-                    className="p-3 sm:p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <div className="flex items-start gap-2 sm:gap-3">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full"></div>
-                      </div>
-                      <span className="text-sm sm:text-base text-gray-700 group-hover:text-blue-600 transition-colors leading-relaxed">
-                        {question}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
+             {/* Suggested Questions */}
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+  {suggestedQuestions.map((question, index) => (
+    <button
+      key={index}
+      onClick={() => handleQuestionClick(question)}
+      disabled={isLoading}
+      className="p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all text-left lg:text-center disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <span className="text-base text-gray-700 group-hover:text-blue-600 transition-colors leading-relaxed">
+        {question}
+      </span>
+    </button>
+  ))}
+</div>
             </div>
           </div>
         ) : (

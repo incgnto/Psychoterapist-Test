@@ -21,6 +21,7 @@ body {
 }
 
 body {
+  @apply font-sans;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,

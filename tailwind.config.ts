@@ -22,8 +22,21 @@ const config: Config = {
           900: '#1e3a8a',
         },
       },
+      fontFamily: {
+        sans: [
+          '"Segoe UI Variable"',
+          '"Segoe UI"',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Roboto',
+          '"Helvetica Neue"',
+          'Arial',
+          'sans-serif',
+        ],
+      },
     },
   },
   plugins: [],
 }
+
 export default config
