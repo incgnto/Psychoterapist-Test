@@ -2,33 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light/dark tokens (optional) */
+/* ---- Light-only base tokens ---- */
 :root {
-  color-scheme: light dark;
+  /* Force light UI controls (inputs, selects) */
+  color-scheme: light;
 
-  --foreground-rgb: 17, 24, 39;
+  --foreground-rgb: 17, 24, 39;        /* slate-900 */
   --background-start-rgb: 250, 250, 250;
   --background-end-rgb: 255, 255, 255;
 }
 
-/* Dark mode tokens */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 229, 231, 235;
-    --background-start-rgb: 10, 10, 11;
-    --background-end-rgb: 17, 17, 19;
-  }
-}
-
-/* Resets + base type */
+/* ---- Resets + base type ---- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  font-size: 15px;       /* calm reading size */
+  font-size: 15px;
   scroll-behavior: smooth;
 }
 
@@ -49,4 +40,14 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-/* (your existing animations/utilities can stay below) */
+/* ---- Motion accessibility: stop animations if requested ---- */
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe\:animate-breathe-slow,
+  .motion-safe\:animate-breathe-fast,
+  .motion-safe\:animate-glow-slow,
+  .motion-safe\:animate-ripple-slow {
+    animation: none !important;
+  }
+}
+
+/* (No custom @property / orb color variables — removed as unused) */

@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 // Removed next-auth session and router imports
 import { MessageSquare } from 'lucide-react'
 import ChatSidebar from './components/ChatSidebar'
-import ChatMain from './components/ChatMain'
+import ChatMain from './components/chat/ChatMain'
 import ErrorBoundary from './components/ErrorBoundary'
 
 export default function Home() {
