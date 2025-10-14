@@ -55,6 +55,23 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
     loadSession
   } = chatHook || {}
 
+// Autosize the textarea smoothly
+const taRef = useRef<HTMLTextAreaElement | null>(null);
+const handleAutosizeInput: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
+  const el = e.currentTarget;
+  el.style.height = "0px";
+  el.style.height = Math.min(el.scrollHeight, 160) + "px"; // cap height
+  setMessage(el.value);
+};
+useEffect(() => {
+  if (taRef.current) {
+    taRef.current.style.height = "auto";
+    taRef.current.style.height = Math.min(taRef.current.scrollHeight, 160) + "px";
+  }
+  // reflow when attachments change
+}, [attachedFiles.length]);
+
+
   // Mark as initialized after first render
   useEffect(() => {
     setIsInitialized(true)
@@ -735,7 +752,7 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
   return (
     <div className="flex-1 flex flex-col">
      {/* Header */}
-<div className="sticky top-0 z-40 bg-white border-b border-gray-200 p-4">
+<div className="sticky top-0 bg-white border-b border-gray-200 p-4">
   <div className="flex flex-wrap items-center justify-center text-center">
     {/* Mobile version (shows below sm) */}
     <div className="block sm:hidden text-[13px] text-gray-700 leading-relaxed">
@@ -823,222 +840,262 @@ export default function ChatMain({ newChatTrigger, selectedSession }: ChatMainPr
         )}
       </div>
 
-      {/* Input Section */}
-      <div className="bg-white border-t border-gray-200 p-3 sm:p-4 sticky bottom-0 z-10">
-        <div className="max-w-4xl mx-auto">
-          {/* File Preview */}
-          {attachedFiles.length > 0 && (
-            <div className="mb-3">
-              <div className="flex flex-wrap gap-2">
-                {attachedFiles.map((file, index) => (
-                  <div key={index} className="flex items-center gap-2 bg-gray-100 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2">
-                    {getFileIcon(file)}
-                    <span className="text-xs sm:text-sm text-gray-700 max-w-[100px] sm:max-w-[150px] truncate">
-                      {file.name}
-                    </span>
-                    <button
-                      onClick={() => removeFile(index)}
-                      className="text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          <div 
-            className={`flex items-end gap-2 sm:gap-3 ${isDragOver ? 'bg-blue-50 border-2 border-blue-300 border-dashed rounded-lg p-2' : ''}`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <div className="flex-1 relative">
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder={isDragOver ? "Drop files here..." : "Type what’s on your mind…"}
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-24 sm:pr-32 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm sm:text-base"
-                rows={1}
-                style={{ minHeight: '44px', maxHeight: '120px' }}
-              />
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1 sm:gap-2">
-                {/* File Upload Button */}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileSelect}
-                  multiple
-                  accept="image/*,.pdf,.doc,.docx,.txt"
-                  className="hidden"
-                />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="p-1 sm:p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded transition-colors"
-                  title="Attach files"
-                >
-                  <Paperclip className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                </button>
-                {/* Voice Recording Controls */}
-                {isRecording && (
-                  <button
-                    onClick={togglePause}
-                    className="p-1 sm:p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors hidden sm:block"
-                  >
-                    {isPaused ? <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Pause className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-                  </button>
-                )}
-                
-                {/* Voice Mode Button */}
-                <button
-                  onClick={() => setIsVoiceModeOpen(true)}
-                  className="p-1 sm:p-1.5 text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded transition-colors"
-                  title="Voice Mode"
-                >
-                  <Radio className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                </button>
+      {/* Input Section */}{/* Input Bar */}
+<div className="sticky bottom-0 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-t border-gray-200 p-3 sm:p-4">
+  <div className="max-w-4xl mx-auto">
 
-
-                
-                {/* Voice Recording Controls */}
-                {!isRecording ? (
-                  /* Start Recording Button */
-                  <div className="relative">
-                    <button
-                      onClick={toggleRecording}
-                      disabled={!speechSupported}
-                      className={`p-2 sm:p-2.5 rounded-full transition-all duration-200 min-w-[40px] min-h-[40px] flex items-center justify-center ${
-                        !speechSupported
-                          ? 'text-gray-300 cursor-not-allowed bg-gray-100'
-                          : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 hover:shadow-md'
-                      }`}
-                      title={
-                        !speechSupported 
-                          ? 'Voice recognition not supported'
-                          : micPermission === 'denied'
-                            ? 'Microphone permission required'
-                            : 'Start voice recording (continuous until you stop)'
-                      }
-                    >
-                      <Mic className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                        !speechSupported || micPermission === 'denied' ? '' : 'drop-shadow-sm'
-                      }`} />
-                    </button>
-                  </div>
-                ) : (
-                  /* Cancel and End Recording Buttons */
-                  <div className="flex items-center gap-1">
-                    {/* Cancel Button */}
-                    <button
-                      onClick={cancelRecording}
-                      className="p-2 sm:p-2.5 rounded-full bg-gray-500 hover:bg-gray-600 text-white transition-all duration-200 min-w-[40px] min-h-[40px] flex items-center justify-center"
-                      title="Cancel recording (discard)"
-                    >
-                      <X className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </button>
-                    
-                    {/* End Recording Button */}
-                    <button
-                      onClick={endRecording}
-                      disabled={isTranscribing}
-                      className={`p-2 sm:p-2.5 rounded-full transition-all duration-200 min-w-[40px] min-h-[40px] flex items-center justify-center ${
-                        isTranscribing
-                          ? 'bg-blue-400 text-white cursor-not-allowed'
-                          : 'bg-green-600 hover:bg-green-700 text-white'
-                      }`}
-                      title={isTranscribing ? 'Processing...' : 'End recording (add to message)'}
-                    >
-                      {isTranscribing ? (
-                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      ) : (
-                        <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                      )}
-                    </button>
-                    
-                    {/* Recording indicator */}
-                    <div className="ml-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {/* Send Button */}
-            <button
-              onClick={handleSendMessage}
-              disabled={(!message.trim() && attachedFiles.length === 0) || isLoading}
-              className="p-2.5 sm:p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+    {/* File Preview */}
+    {attachedFiles.length > 0 && (
+      <div className="mb-3">
+        <div className="flex flex-wrap gap-2">
+          {attachedFiles.map((file, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 bg-slate-100 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2"
             >
-              {isLoading ? (
-                <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-              )}
-            </button>
+              {getFileIcon(file)}
+              <span className="text-xs sm:text-sm text-slate-700 max-w-[120px] sm:max-w-[160px] truncate">
+                {file.name}
+              </span>
+              <button
+                onClick={() => removeFile(index)}
+                className="text-slate-400 hover:text-red-500 transition-colors"
+                aria-label="Remove file"
+                title="Remove file"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* Input row */}
+   <div
+  className={`
+    flex items-center gap-2 sm:gap-3 rounded-xl border
+    ${isDragOver ? 'bg-sky-50 border-sky-200 ring-2 ring-sky-300/60' : 'bg-white border-slate-200'}
+    transition-colors
+  `}
+  onDragOver={handleDragOver}
+  onDragLeave={handleDragLeave}
+  onDrop={handleDrop}
+>
+  {/* Textarea + icon rail */}
+  <div className="relative flex-1">
+    <textarea
+      ref={taRef}
+      value={message}
+      onChange={handleAutosizeInput}
+      onKeyDown={handleKeyPress}
+      placeholder={isDragOver ? "Drop files here..." : "Type what’s on your mind…"}
+      rows={1}
+      className="
+        block w-full resize-none bg-transparent
+        px-3 sm:px-4 py-[10px] sm:py-3
+        pr-28 sm:pr-40               /* more space before first icon */
+        text-[15px] sm:text-base leading-6
+        text-slate-800 placeholder:text-slate-400
+        focus:outline-none
+      "
+      style={{ minHeight: "44px", maxHeight: "160px" }}
+      aria-label="Message input"
+    />
+
+    {/* Icon rail */}
+    <div className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 sm:gap-2">
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileSelect}
+        multiple
+        accept="image/*,.pdf,.doc,.docx,.txt"
+        className="hidden"
+      />
+
+      {/* Attach */}
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        className="
+          h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center
+          text-slate-500 hover:text-slate-700 hover:bg-slate-100 active:scale-[0.98]
+          transition
+        "
+        title="Attach files"
+        aria-label="Attach files"
+      >
+        <Paperclip className="w-4 h-4 sm:w-5 sm:h-5" />
+      </button>
+
+      {/* Voice Mode */}
+      <button
+        onClick={() => setIsVoiceModeOpen(true)}
+        className="
+          h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center
+          text-purple-600 hover:text-purple-700 hover:bg-purple-50 active:scale-[0.98]
+          transition
+        "
+        title="Voice Mode"
+        aria-label="Voice mode"
+      >
+        <Radio className="w-4 h-4 sm:w-5 sm:h-5" />
+      </button>
+
+      {/* Recording */}
+      {!isRecording ? (
+        <button
+          onClick={toggleRecording}
+          disabled={!speechSupported}
+          className={[
+            "h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center transition",
+            !speechSupported
+              ? "text-slate-300 cursor-not-allowed bg-slate-100"
+              : "text-slate-600 hover:text-sky-600 hover:bg-sky-50 active:scale-[0.98]",
+          ].join(" ")}
+          aria-label="Start voice recording"
+          title={
+            !speechSupported
+              ? "Voice recognition not supported"
+              : micPermission === "denied"
+              ? "Microphone permission required"
+              : "Start voice recording"
+          }
+        >
+          <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
+        </button>
+      ) : (
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          <button
+            onClick={togglePause}
+            className="hidden sm:flex h-9 w-9 rounded-full text-sky-700 hover:bg-sky-50 items-center justify-center transition"
+            aria-label={isPaused ? "Resume recording" : "Pause recording"}
+            title={isPaused ? "Resume recording" : "Pause recording"}
+          >
+            {isPaused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
+          </button>
+
+          <button
+            onClick={cancelRecording}
+            className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-slate-500 hover:bg-slate-600 text-white transition flex items-center justify-center"
+            aria-label="Cancel recording"
+            title="Cancel recording (discard)"
+          >
+            <X className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
+
+          <button
+            onClick={endRecording}
+            disabled={isTranscribing}
+            className={[
+              "h-8 w-8 sm:h-9 sm:w-9 rounded-full text-white transition flex items-center justify-center",
+              isTranscribing
+                ? "bg-sky-400 cursor-not-allowed"
+                : "bg-emerald-600 hover:bg-emerald-700",
+            ].join(" ")}
+            aria-label="End recording"
+            title={isTranscribing ? "Processing..." : "End recording (add to message)"}
+          >
+            {isTranscribing ? (
+              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+            )}
+          </button>
+
+          <span className="ml-0.5 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-red-500 rounded-full animate-pulse" />
+        </div>
+      )}
+    </div>
+  </div>
+
+  {/* Send button — perfectly aligned bottom-right on mobile */}
+  <button
+  onClick={handleSendMessage}
+  disabled={(!message.trim() && attachedFiles.length === 0) || isLoading}
+  className="
+    flex-shrink-0
+    h-11 sm:h-12 px-3 sm:px-4 rounded-xl
+    bg-sky-600 text-white hover:bg-sky-700
+    disabled:bg-slate-300 disabled:cursor-not-allowed
+    leading-none
+    transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400
+  "
+  aria-label="Send message"
+>
+  {isLoading ? (
+    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+  ) : (
+    <Send className="w-5 h-5" />
+  )}
+</button>
+
+
+</div>
+
+
+    {/* Voice Recording Error Message */}
+    {recordingError && (
+      <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+        <div className="flex items-start gap-2">
+          <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 19c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          <div className="flex-1">
+            <p className="text-sm text-red-600 font-medium">{recordingError}</p>
+
+            {(recordingError.includes('iPhone') || recordingError.includes('iOS') || recordingError.includes('Safari')) && (
+              <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded">
+                <p className="font-medium text-blue-800 text-sm mb-2">📱 iPhone Setup Required:</p>
+                <ol className="list-decimal list-inside text-xs text-blue-700 space-y-1 mb-3">
+                  <li>Go to iPhone <strong>Settings</strong></li>
+                  <li>Scroll down → <strong>Safari</strong></li>
+                  <li>Tap <strong>Camera & Microphone</strong></li>
+                  <li>Select <strong>Allow</strong> (not Ask)</li>
+                  <li>Close Safari completely</li>
+                  <li>Reopen Safari and refresh this page</li>
+                </ol>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="w-full px-3 py-2 bg-sky-600 text-white text-sm rounded hover:bg-sky-700 transition-colors"
+                >
+                  🔄 Refresh Page After Setup
+                </button>
+              </div>
+            )}
+
+            {micPermission === 'denied' && !recordingError.includes('iPhone') && (
+              <button
+                onClick={requestMicPermission}
+                className="mt-2 text-xs underline hover:no-underline font-medium"
+              >
+                Try again
+              </button>
+            )}
           </div>
-          
-          {/* Voice Recording Error Message */}
-          {recordingError && (
-            <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-start gap-2">
-                <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 19c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <div className="flex-1">
-                  <p className="text-sm text-red-600 font-medium">
-                    {recordingError}
-                  </p>
-                  {(recordingError.includes('iPhone') || recordingError.includes('iOS') || recordingError.includes('Safari')) && (
-                    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded">
-                      <p className="font-medium text-blue-800 text-sm mb-2">📱 iPhone Setup Required:</p>
-                      <ol className="list-decimal list-inside text-xs text-blue-700 space-y-1 mb-3">
-                        <li>Go to iPhone <strong>Settings</strong></li>
-                        <li>Scroll down → <strong>Safari</strong></li>
-                        <li>Tap <strong>Camera & Microphone</strong></li>
-                        <li>Select <strong>Allow</strong> (not Ask)</li>
-                        <li>Close Safari completely</li>
-                        <li>Reopen Safari and refresh this page</li>
-                      </ol>
-                      <button
-                        onClick={() => window.location.reload()}
-                        className="w-full px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-                      >
-                        🔄 Refresh Page After Setup
-                      </button>
-                    </div>
-                  )}
-                  {micPermission === 'denied' && !recordingError.includes('iPhone') && (
-                    <button
-                      onClick={requestMicPermission}
-                      className="mt-2 text-xs underline hover:no-underline font-medium"
-                    >
-                      Try again
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Voice Recording Status */}
-          {(isRecording || isTranscribing) && (
-            <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-blue-600 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                  {isTranscribing ? 'Converting speech to text...' : 'Recording continuously... Keep speaking'}
-                </p>
-                {!isTranscribing && (
-                  <p className="text-xs text-blue-500">
-                    Use Cancel (✗) or End (✓) buttons to stop
-                  </p>
-                )}
-              </div>
-            </div>
+        </div>
+      </div>
+    )}
+
+    {/* Voice Recording Status */}
+    {(isRecording || isTranscribing) && (
+      <div className="mt-2 p-3 bg-sky-50 border border-sky-200 rounded-lg">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-sky-700 flex items-center gap-2">
+            <span className="w-2 h-2 bg-sky-500 rounded-full animate-pulse" />
+            {isTranscribing ? 'Converting speech to text…' : 'Recording continuously… Keep speaking'}
+          </p>
+          {!isTranscribing && (
+            <p className="text-xs text-sky-600">Use Cancel (✗) or End (✓) to stop</p>
           )}
         </div>
       </div>
+    )}
+  </div>
+</div>
+
 
       {/* Voice Mode Modal */}
       <VoiceMode 
