@@ -2,16 +2,15 @@
 
 import { Message } from '@/app/types/chat';
 import { useTextToSpeech } from '@/app/hooks/useTextToSpeech';
-import { MessageAvatar, MessageHeader } from './MessageHeader';
+import { MessageHeader } from './MessageHeader';
 import { MessageImages } from './MessageImages';
 import { MessageContent } from './MessageContent';
-import { useEffect } from 'react';
 
 export default function ChatMessage({
   message,
   isStreaming = false,
-  isBookmarked,             // ← new
-  onToggleBookmark,         // ← new
+  isBookmarked,
+  onToggleBookmark,
 }: {
   message: Message;
   isStreaming?: boolean;
@@ -20,15 +19,20 @@ export default function ChatMessage({
 }) {
   const isUser = message.role === 'user';
   const isAssistant = message.role === 'assistant';
-  const { isPlaying, isLoading, toggle, stop } = useTextToSpeech();
-useEffect(() => stop, [stop]);
+  const { isPlaying, isLoading, toggle } = useTextToSpeech();
 
   return (
-    <div className="px-3 sm:px-4 py-2">
-      <div className="flex gap-3 sm:gap-4">
-        <MessageAvatar isUser={isUser} />
-
-        <div className={['flex-1 min-w-0 rounded-2xl p-3 sm:p-4','ring-1 shadow-sm transition-colors',isUser ? 'bg-white ring-slate-200' : 'bg-slate-50 ring-slate-200'].join(' ')}>
+    <div className="px-3 sm:px-4 py-1.5">
+      {/* Row alignment: therapist left, you right */}
+      <div className={['flex', isUser ? 'justify-end' : 'justify-start'].join(' ')}>
+        <div
+          className={[
+            'min-w-0 rounded-2xl p-3 sm:p-4 ring-1 shadow-sm transition-colors',
+            isUser ? 'bg-white ring-slate-200' : 'bg-slate-50 ring-slate-200',
+            // width behavior: cap user, let therapist flow
+            isUser ? 'max-w-[85%] sm:max-w-[75%]' : 'max-w-none',
+          ].join(' ')}
+        >
           <MessageHeader
             message={message}
             isAssistant={isAssistant}

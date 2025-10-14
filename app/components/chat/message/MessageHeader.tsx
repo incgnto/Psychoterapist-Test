@@ -1,6 +1,14 @@
 'use client';
 
-import { User, Volume2, VolumeX, Loader2, Copy, Bookmark, BookmarkCheck } from 'lucide-react';
+import {
+  User,
+  Volume2,
+  VolumeX,
+  Loader2,
+  Copy,
+  Bookmark,
+  BookmarkCheck,
+} from 'lucide-react';
 import { useState } from 'react';
 import type { Message } from '@/app/types/chat';
 
@@ -25,8 +33,8 @@ export function MessageHeader({
   isPlaying,
   isLoading,
   onToggleTTS,
-  isBookmarked,          // ← controlled
-  onToggleBookmark,      // ← controlled
+  isBookmarked,
+  onToggleBookmark,
 }: {
   message: Message;
   isAssistant: boolean;
@@ -56,65 +64,82 @@ export function MessageHeader({
   };
 
   return (
-    <div className="flex items-baseline gap-2 mb-2">
-      <span className="text-[13px] sm:text-sm font-medium text-slate-900">
-        {isUser ? 'You' : 'The Therapist'}
-      </span>
-      <span className="text-[12px] text-slate-500">{ts}</span>
+    // Align the whole row by center
+    <div className="flex items-center gap-2 mb-2">
+      {/* Left: name + time aligned by baseline */}
+      <div className="flex items-baseline gap-2">
+        <span className="text-[13px] sm:text-sm font-medium text-slate-900 leading-tight">
+          {isUser ? 'You' : 'The Therapist'}
+        </span>
+        <span className="text-[12px] text-slate-500 leading-tight">
+          {ts}
+        </span>
+      </div>
 
-      {/* Actions: therapist/assistant only */}
-      {isAssistant && (
-        <div className="ml-auto inline-flex items-center gap-1.5">
-          {/* Listen */}
+      {/* Right: action buttons with fixed, identical heights */}
+      <div className="ml-auto inline-flex items-center gap-1.5">
+        {isAssistant && (
           <button
             onClick={onToggleTTS}
             disabled={isLoading}
             title={isPlaying ? 'Stop reading' : 'Listen'}
             aria-label={isPlaying ? 'Stop reading' : 'Listen'}
-            className="rounded-full px-2 py-1 text-[12px] text-slate-600 hover:text-slate-800 hover:bg-slate-100 disabled:opacity-60 transition-colors inline-flex items-center gap-1"
+            className="
+              inline-flex items-center justify-center
+              h-7 px-2 rounded-full text-[12px] leading-none
+              text-slate-600 hover:text-slate-800 hover:bg-slate-100
+              disabled:opacity-60 transition-colors
+            "
           >
             {isLoading ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : isPlaying ? (
-              <VolumeX className="w-3.5 h-3.5" />
+              <VolumeX className="w-4 h-4" />
             ) : (
-              <Volume2 className="w-3.5 h-3.5" />
+              <Volume2 className="w-4 h-4" />
             )}
-            <span className="hidden sm:inline">{isPlaying ? 'Stop' : 'Listen'}</span>
+            <span className="hidden sm:inline ml-1">{isPlaying ? 'Stop' : 'Listen'}</span>
           </button>
+        )}
 
-          {/* Copy */}
-          <button
-            onClick={handleCopy}
-            title={copied ? 'Copied' : 'Copy'}
-            aria-label={copied ? 'Message copied' : 'Copy message'}
-            className="rounded-full p-1.5 text-slate-600 hover:text-slate-800 hover:bg-slate-100 transition-colors"
-          >
-            {copied ? (
-              // subtle success state via checkmark tint
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                <path d="M20 6L9 17l-5-5" stroke="rgb(5 150 105)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            ) : (
-              <Copy className="w-4 h-4" />
-            )}
-          </button>
+        <button
+          onClick={handleCopy}
+          title={copied ? 'Copied' : 'Copy'}
+          aria-label={copied ? 'Message copied' : 'Copy message'}
+          className="
+            inline-flex items-center justify-center
+            h-7 w-7 rounded-full leading-none
+            text-slate-600 hover:text-slate-800 hover:bg-slate-100
+            transition-colors
+          "
+        >
+          {copied ? (
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+              <path d="M20 6L9 17l-5-5" stroke="rgb(5 150 105)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          ) : (
+            <Copy className="w-4 h-4" />
+          )}
+        </button>
 
-          {/* Bookmark (controlled) */}
-          <button
-            onClick={() => onToggleBookmark?.(message)}
-            title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
-            aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
-            className="rounded-full p-1.5 text-slate-600 hover:text-slate-800 hover:bg-slate-100 transition-colors"
-          >
-            {isBookmarked ? (
-              <BookmarkCheck className="w-4 h-4 text-emerald-600" />
-            ) : (
-              <Bookmark className="w-4 h-4" />
-            )}
-          </button>
-        </div>
-      )}
+        <button
+          onClick={() => onToggleBookmark?.(message)}
+          title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+          aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+          className="
+            inline-flex items-center justify-center
+            h-7 w-7 rounded-full leading-none
+            text-slate-600 hover:text-slate-800 hover:bg-slate-100
+            transition-colors
+          "
+        >
+          {isBookmarked ? (
+            <BookmarkCheck className="w-4 h-4 text-emerald-600" />
+          ) : (
+            <Bookmark className="w-4 h-4" />
+          )}
+        </button>
+      </div>
     </div>
   );
 }
