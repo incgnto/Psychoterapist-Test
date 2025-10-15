@@ -1,10 +1,17 @@
 'use client';
-
 import { ChevronLeft } from 'lucide-react';
 import TabPill from './TabPill';
 import BackHomeLink from './BackHomeLink';
 
-export default function NavBar({ tab, setTab, onToggle }) {
+export default function NavBar({
+  tab,
+  setTab,
+  onToggle,
+}: {
+  tab: 'sessions' | 'bookmarks';
+  setTab: (t: 'sessions' | 'bookmarks') => void;
+  onToggle: () => void;
+}) {
   return (
     <div className="">
       <nav className="px-3 pt-3 pb-2 flex items-center gap-2">

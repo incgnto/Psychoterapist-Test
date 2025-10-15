@@ -1,8 +1,13 @@
 'use client';
-
 import { Plus } from 'lucide-react';
 
-export default function NewSessionCTA({ onNewChat, visible }) {
+export default function NewSessionCTA({
+  onNewChat,
+  visible,
+}: {
+  onNewChat: () => void;
+  visible: boolean;
+}) {
   if (!visible) return null;
   return (
     <div className="px-3 pb-3">

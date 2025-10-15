@@ -1,9 +1,8 @@
 'use client';
-
 import { Bookmark as BookmarkIcon } from 'lucide-react';
 import EmptyState from './EmptyState';
 
-export default function BookmarksList({ items }) {
+export default function BookmarksList({ items }: { items: any[] }) {
   if (!items || items.length === 0) return <EmptyState icon="bookmarks" />;
   return (
     <>

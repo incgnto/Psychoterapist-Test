@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
-export function useSidebarData(tab, email, enabled) {
+export function useSidebarData(tab: 'sessions' | 'bookmarks', email: string, enabled: boolean) {
   const [loading, setLoading] = useState(false);
-  const [sessions, setSessions] = useState([]);
-  const [bookmarks, setBookmarks] = useState([]);
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [bookmarks, setBookmarks] = useState<any[]>([]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -36,7 +36,9 @@ export function useSidebarData(tab, email, enabled) {
       }
     })();
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [tab, email, enabled]);
 
   return { loading, sessions, bookmarks };

@@ -9,22 +9,37 @@ import NewSessionCTA from './components/NewSessionCTA';
 import SessionsList from './components/SessionsList';
 import BookmarksList from './components/BookmarksList';
 
-export default function ChatSidebar({ isOpen, onToggle, onNewChat, onSelectChat }) {
-  const [tab, setTab] = useState('sessions'); // 'sessions' | 'bookmarks'
+type ChatSidebarProps = {
+  isOpen: boolean;
+  onToggle: () => void;
+  onNewChat: () => void;
+  onSelectChat?: (session: unknown) => void;
+};
+
+type TabKey = 'sessions' | 'bookmarks';
+
+export default function ChatSidebar({
+  isOpen,
+  onToggle,
+  onNewChat,
+  onSelectChat,
+}: ChatSidebarProps) {
+  const [tab, setTab] = useState<TabKey>('sessions');
   const email = useEmail();
   const { loading, sessions, bookmarks } = useSidebarData(tab, email, isOpen);
 
   // ESC to close (when open)
   useEffect(() => {
     if (!isOpen) return;
-    const onKey = (e) => e.key === 'Escape' && onToggle();
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onToggle();
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [isOpen, onToggle]);
 
   // Body scroll lock on mobile when open
   useEffect(() => {
-    const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 1023px)').matches;
+    const isMobile =
+      typeof window !== 'undefined' && window.matchMedia('(max-width: 1023px)').matches;
     if (isOpen && isMobile) {
       document.body.classList.add('overflow-hidden');
       return () => document.body.classList.remove('overflow-hidden');
@@ -35,7 +50,6 @@ export default function ChatSidebar({ isOpen, onToggle, onNewChat, onSelectChat 
 
   return (
     <>
-      {/* Backdrop (mobile only) */}
       {isOpen && (
         <button
           onClick={onToggle}
@@ -44,7 +58,6 @@ export default function ChatSidebar({ isOpen, onToggle, onNewChat, onSelectChat 
         />
       )}
 
-      {/* Sidebar */}
       <aside
         id="chat-sidebar"
         role="dialog"

@@ -1,8 +1,13 @@
 'use client';
-
 import EmptyState from './EmptyState';
 
-export default function SessionsList({ items, onSelect }) {
+export default function SessionsList({
+  items,
+  onSelect,
+}: {
+  items: any[];
+  onSelect?: (s: unknown) => void;
+}) {
   if (!items || items.length === 0) return <EmptyState icon="sessions" />;
   return (
     <>
