@@ -2,7 +2,9 @@
 
 import { Bookmark as BookmarkIcon, MessageSquare as MessageSquareIcon } from 'lucide-react';
 
-export default function EmptyState({ icon }) {
+type EmptyIcon = 'sessions' | 'bookmarks';
+
+export default function EmptyState({ icon }: { icon: EmptyIcon }) {
   const Icon = icon === 'sessions' ? MessageSquareIcon : BookmarkIcon;
   const title = icon === 'sessions' ? 'No conversations yet' : 'No bookmarks yet';
   const descr =
