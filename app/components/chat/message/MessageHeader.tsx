@@ -126,8 +126,9 @@ export function MessageHeader({
           onClick={() => onToggleBookmark?.(message)}
           title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
           aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+          // inline-flex instead of hidden to show the bookmark icon on the chat header
           className="
-            inline-flex items-center justify-center
+            hidden items-center justify-center
             h-7 w-7 rounded-full leading-none
             text-slate-600 hover:text-slate-800 hover:bg-slate-100
             transition-colors

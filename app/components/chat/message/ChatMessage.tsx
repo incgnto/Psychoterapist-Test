@@ -28,7 +28,7 @@ export default function ChatMessage({
         <div
           className={[
             'min-w-0 rounded-2xl p-3 sm:p-4 ring-1 shadow-sm transition-colors',
-            isUser ? 'bg-white ring-slate-200' : 'bg-slate-50 ring-slate-200',
+            isUser ? 'bg-white ring-slate-200' : 'bg-sky-50 ring-slate-200',
             // width behavior: cap user, let therapist flow
             isUser ? 'max-w-[85%] sm:max-w-[75%]' : 'max-w-none',
           ].join(' ')}
