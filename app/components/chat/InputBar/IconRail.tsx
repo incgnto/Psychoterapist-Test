@@ -6,8 +6,8 @@ export function IconRail({
   onOpenVoiceMode,
   voice,
   isTranscribing,
-  sttUiActive,                 // <-- NEW
-  setSttUiActive,             // <-- NEW
+  sttUiActive,
+  setSttUiActive,
 }: {
   fileInputRef: React.RefObject<HTMLInputElement>;
   onPickFiles: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -22,22 +22,21 @@ export function IconRail({
     speechSupported: boolean;
   };
   isTranscribing: boolean;
-  sttUiActive: boolean;                      // <-- NEW
-  setSttUiActive: (b: boolean) => void;      // <-- NEW
+  sttUiActive: boolean;
+  setSttUiActive: (b: boolean) => void;
 }) {
-  const { isRecording, isPaused, setIsPaused, start, cancel, speechSupported } = voice;
+  const { isPaused, setIsPaused, start, cancel, speechSupported } = voice;
 
-  // Use parent-controlled flag so UI reacts instantly
   const showSttControls = sttUiActive;
 
   const handleStart = () => {
-    setSttUiActive(true);  // UI on immediately
-    start();               // start engine
+    setSttUiActive(true);
+    start();
   };
 
   const handleCancel = () => {
-    setSttUiActive(false); // UI off immediately
-    cancel();              // stop engine
+    setSttUiActive(false);
+    cancel();
   };
 
   return (
@@ -85,7 +84,6 @@ export function IconRail({
             {isPaused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
           </button>
 
-          {/* Cancel (X) */}
           <button
             onClick={handleCancel}
             className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-slate-500 hover:bg-slate-600 text-white transition flex items-center justify-center"
@@ -94,7 +92,6 @@ export function IconRail({
             <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {/* Recording indicator */}
           <span className="ml-0.5 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-red-500 rounded-full animate-pulse" />
         </div>
       )}

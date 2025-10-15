@@ -29,16 +29,14 @@ export interface InputBarProps {
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
 
-export function InputBar({...props}: InputBarProps) {
-  const {
-    message, setMessage,
-    attachedFiles, onRemoveFile,
-    onSend, isLoading,
-    isDragOver, setIsDragOver,
-    fileInputRef, onPickFiles, onDropFiles,
-    voice, onKeyDown,
-  } = props;
-
+export function InputBar({
+  message, setMessage,
+  attachedFiles, onRemoveFile,
+  onSend, isLoading,
+  isDragOver, setIsDragOver,
+  fileInputRef, onPickFiles, onDropFiles,
+  voice, onKeyDown,
+}: InputBarProps) {
   const [sttUiActive, setSttUiActive] = useState(false);
   const taRef = useRef<HTMLTextAreaElement>(null);
 
@@ -54,13 +52,17 @@ export function InputBar({...props}: InputBarProps) {
   useEffect(() => { resizeTextarea(); }, [message]);
 
   const handleSendClick = () => {
+    // Snap UI back to normal (icon rail)
     setSttUiActive(false);
+
+    // Force-stop STT engine (finalization continues, but voice callbacks are gated in ChatMain)
     try {
       const p = voice?.end?.();
       if (p && typeof p.then === 'function') p.catch(console.error);
     } catch (e) {
       console.error(e);
     }
+
     onSend();
     taRef.current?.focus();
   };
@@ -70,13 +72,10 @@ export function InputBar({...props}: InputBarProps) {
       <div className="max-w-4xl mx-auto">
         <FilePreview files={attachedFiles} onRemove={onRemoveFile} />
 
-        {/* ✅ Only inner background, no border */}
         <div
-          className={`flex items-center border border-gray-200 gap-2 sm:gap-3 rounded-xl ${
-            isDragOver
-              ? 'bg-sky-50 ring-2 ring-sky-300/60'
-              : 'bg-white'
-          } transition-colors`}
+          className={`flex items-center gap-2 sm:gap-3 rounded-xl ${
+            isDragOver ? 'bg-sky-50 ring-2 ring-sky-300/60' : 'bg-white'
+          } transition-colors border border-gray-200`}
           onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
           onDragLeave={(e) => { e.preventDefault(); setIsDragOver(false); }}
           onDrop={(e) => { onDropFiles(e); setIsDragOver(false); }}
@@ -107,7 +106,7 @@ export function InputBar({...props}: InputBarProps) {
             />
           </div>
 
-          {/* Send button */}
+          {/* Send — always visible */}
           <button
             onClick={handleSendClick}
             className="flex-shrink-0 h-11 sm:h-12 px-3 sm:px-4 rounded-xl bg-sky-600 text-white hover:bg-sky-700 leading-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"

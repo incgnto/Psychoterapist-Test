@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useMemo } from 'react';
-import { AnimatePresence, motion, Variants } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import ChatMessage from './message/ChatMessage';
 import { useBookmarks } from '@/app/hooks/useBookmarks';
 import type { Message } from '@/app/types/chat';
@@ -14,22 +14,14 @@ const bubbleVariants = {
   animate: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.4,     // ← slower fade
-      ease: EASE_OUT,
-      delay: 0.05,       // ← small entrance delay
-    },
+    transition: { duration: 0.4, ease: EASE_OUT, delay: 0.05 },
   },
   exit: {
     opacity: 0,
     y: 10,
-    transition: {
-      duration: 0.25,
-      ease: EASE_IN,
-    },
+    transition: { duration: 0.25, ease: EASE_IN },
   },
 };
-
 
 export function MessagesList({
   messages,
@@ -54,10 +46,9 @@ export function MessagesList({
   return (
     <div className="flex-1 overflow-y-auto relative z-0">
       <div className="max-w-4xl mx-auto px-4 sm:px-0">
-        <AnimatePresence initial={false} mode="popLayout">
+        <AnimatePresence initial={false}>
           {messages.map((m, idx) => {
-            const isLastAssistant =
-              isLoading && idx === messages.length - 1 && m.role === 'assistant';
+            const isLastAssistant = isLoading && idx === messages.length - 1 && m.role === 'assistant';
 
             return (
               <motion.div
@@ -66,40 +57,40 @@ export function MessagesList({
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                layout
+                // Animate only position between items; DO NOT animate size (prevents squeeze)
+                layout="position"
               >
-                <ChatMessage
-                  message={m}
-                  isStreaming={isLastAssistant}
-                  isBookmarked={m.id ? isBookmarked(m.id) : false}
-                  onToggleBookmark={toggleMessage}
-                />
+                {/* For streaming, also avoid layout on the inner bubble */}
+                <div className={isLastAssistant ? '' : ''}>
+                  <ChatMessage
+                    message={m}
+                    isStreaming={isLastAssistant}
+                    isBookmarked={m.id ? isBookmarked(m.id) : false}
+                    onToggleBookmark={toggleMessage}
+                  />
+                </div>
               </motion.div>
             );
           })}
 
           {showThinking && (
-  <motion.div
-    key="assistant-thinking"
-    initial={{ opacity: 0, y: 8 }}
-    animate={{
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, delay: 0.15 }, // ← slower + delayed
-    }}
-    exit={{ opacity: 0, y: 8, transition: { duration: 0.25 } }}
-    layout
-    className="mb-2 sm:mb-3 flex justify-start"
-  >
-    <div className="max-w-[85%] sm:max-w-[70%] rounded-2xl px-3 py-2 sm:px-4 sm:py-3 bg-white border border-slate-200 text-slate-500">
-      <span className="inline-flex items-center gap-2">
-        <span>Thinking</span>
-        <ThinkingDots />
-      </span>
-    </div>
-  </motion.div>
-)}
-
+            <motion.div
+              key="assistant-thinking"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.15 } }}
+              exit={{ opacity: 0, y: 8, transition: { duration: 0.25 } }}
+              // No layout animation for thinking bubble either
+            >
+              <div className="mb-2 sm:mb-3 flex justify-start">
+                <div className="max-w-[85%] sm:max-w-[70%] rounded-2xl px-3 py-2 sm:px-4 sm:py-3 bg-white border border-slate-200 text-slate-500">
+                  <span className="inline-flex items-center gap-2">
+                    <span>Thinking</span>
+                    <ThinkingDots />
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
 
         <div ref={endRef} />

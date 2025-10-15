@@ -17,6 +17,8 @@ import { fileToBase64, isImage } from '@/app/utils/files';
 type Props = {
   newChatTrigger?: number;
   selectedSession?: any;
+  isSidebarOpen?: boolean;
+  onToggleSidebar?: () => void;
 };
 
 const suggested = [
@@ -26,7 +28,12 @@ const suggested = [
   'Quick advice on how to feel better right now?',
 ];
 
-export default function ChatMain({ newChatTrigger, selectedSession }: Props) {
+export default function ChatMain({
+  newChatTrigger,
+  selectedSession,
+  isSidebarOpen,
+  onToggleSidebar,
+}: Props) {
   const { messages = [], isLoading = false, sendMessage, startNewChat, loadSession } = useChat() || {};
 
   const [message, setMessage] = useState('');
@@ -37,17 +44,40 @@ export default function ChatMain({ newChatTrigger, selectedSession }: Props) {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // === Voice gating to prevent repopulating input after Send ===
+  const voiceEnabledRef = useRef(true);
+
   // Voice (interim -> update input, final -> append to input)
-  const voice = useVoice(
-    (live) => setMessage(live),
-    (finalText) => setMessage((prev) => (prev ? `${prev} ` : '') + finalText)
+  const rawVoice = useVoice(
+    (live) => {
+      if (voiceEnabledRef.current) setMessage(live);
+    },
+    (finalText) => {
+      if (voiceEnabledRef.current) {
+        setMessage((prev) => (prev ? `${prev} ` : '') + finalText);
+      }
+    }
   );
-  const voiceAPI = useMemo(
+
+  // Wrap voice to flip the gate appropriately
+  const voice = useMemo(
     () => ({
-      ...voice,
+      ...rawVoice,
+      start: () => {
+        voiceEnabledRef.current = true;
+        return rawVoice.start();
+      },
+      cancel: () => {
+        voiceEnabledRef.current = false;
+        return rawVoice.cancel();
+      },
+      end: () => {
+        voiceEnabledRef.current = false; // prevent final callback from refilling input
+        return rawVoice.end();
+      },
       onOpenVoiceMode: () => setIsVoiceModeOpen(true),
     }),
-    [voice]
+    [rawVoice]
   );
 
   // Quick question pick
@@ -63,7 +93,10 @@ export default function ChatMain({ newChatTrigger, selectedSession }: Props) {
     if ((!message.trim() && attachedFiles.length === 0) || !sendMessage) return;
 
     const text = message.trim();
-    setMessage('');
+
+    // Stop accepting voice updates for this cycle so final STT won't refill input
+    voiceEnabledRef.current = false;
+    setMessage(''); // clear immediately
 
     const images: Array<{ type: 'image'; data: string; mimeType: string; name: string }> = [];
     const docs: { type: 'document'; name: string; mimeType: string; text: string }[] = [];
@@ -74,7 +107,7 @@ export default function ChatMain({ newChatTrigger, selectedSession }: Props) {
         try {
           images.push({ type: 'image', data: await fileToBase64(f), mimeType: f.type, name: f.name });
         } catch {
-          // ignore bad file
+          /* ignore */
         }
       } else {
         try {
@@ -101,20 +134,20 @@ export default function ChatMain({ newChatTrigger, selectedSession }: Props) {
       }
     }
 
-    // Build final text (explicit, no precedence pitfalls)
+    // Final text
     let finalText = text;
     if (nonImageNames.length) {
       const label = nonImageNames.map((n) => `[File attached: ${n}]`).join('\n');
       finalText = finalText ? `${finalText}\n\n${label}` : label;
     }
 
-    // Clear after reading
     clearAll();
-
     await sendMessage(finalText, images.length ? images : undefined, docs);
+
+    // (Optional) Re-enable voice updates on next STT start; handled in voice.start()
   }, [message, attachedFiles, sendMessage, clearAll]);
 
-  // Optional: react to triggers / external session selection
+  // External triggers / session selection
   useEffect(() => {
     if (newChatTrigger && newChatTrigger > 0 && startNewChat) startNewChat();
   }, [newChatTrigger, startNewChat]);
@@ -125,7 +158,7 @@ export default function ChatMain({ newChatTrigger, selectedSession }: Props) {
 
   return (
     <div className="flex-1 flex flex-col">
-      <ChatHeader />
+      <ChatHeader isSidebarOpen={isSidebarOpen} onToggleSidebar={onToggleSidebar} />
 
       <div className="flex-1 flex flex-col">
         {messages.length <= 1 ? (
@@ -152,13 +185,13 @@ export default function ChatMain({ newChatTrigger, selectedSession }: Props) {
         fileInputRef={fileInputRef}
         onPickFiles={handleFileInput}
         onDropFiles={handleDrop}
-        voice={voiceAPI}
-         onKeyDown={(e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();            // or handleSend()
-    }
-  }}
+        voice={voice}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+          }
+        }}
       />
 
       <VoiceMode isOpen={isVoiceModeOpen} onClose={() => setIsVoiceModeOpen(false)} />
