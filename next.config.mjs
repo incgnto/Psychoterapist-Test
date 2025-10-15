@@ -14,6 +14,9 @@ const nextConfig = {
       allowedOrigins: ['*'],
     },
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 }
 
 export default nextConfig

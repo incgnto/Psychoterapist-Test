@@ -24,15 +24,19 @@ export function useSidebarData(tab, email, enabled) {
           if (mounted) setBookmarks(data.bookmarks || []);
         }
       } catch {
-        if (mounted) (tab === 'sessions' ? setSessions([]) : setBookmarks([]));
+        if (mounted) {
+          if (tab === 'sessions') {
+            setSessions([]);
+          } else {
+            setBookmarks([]);
+          }
+        }
       } finally {
         if (mounted) setLoading(false);
       }
     })();
 
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [tab, email, enabled]);
 
   return { loading, sessions, bookmarks };
