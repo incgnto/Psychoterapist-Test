@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import ChatMessage from './message/ChatMessage';
 import { useBookmarks } from '@/app/hooks/useBookmarks';
 import type { Message } from '@/app/types/chat';
 
 const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const EASE_IN:  [number, number, number, number] = [0.12, 0, 0.39, 0];
+const EASE_IN: [number, number, number, number] = [0.12, 0, 0.39, 0];
 
 const bubbleVariants = {
   initial: { opacity: 0, y: 10 },
@@ -26,11 +26,24 @@ const bubbleVariants = {
 export function MessagesList({
   messages,
   isLoading,
+  threadId, // ⬅️ NEW: provide the active thread id
 }: {
   messages: Message[];
   isLoading: boolean;
+  threadId: string;
 }) {
-  const { isBookmarked, toggleMessage } = useBookmarks();
+  // derive email from URL (same pattern you used in Sidebar)
+  const email = useMemo(() => {
+    try {
+      const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+      return params.get('email') || 'guest@pj.com';
+    } catch {
+      return 'guest@pj.com';
+    }
+  }, []);
+  // useBookmarks hook with threadId
+const { isBookmarked, toggleBookmark } = useBookmarks(threadId);
+
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,18 +70,36 @@ export function MessagesList({
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                // Animate only position between items; DO NOT animate size (prevents squeeze)
-                layout="position"
+                layout="position" // position-only to avoid squish during streaming
               >
-                {/* For streaming, also avoid layout on the inner bubble */}
-                <div className={isLastAssistant ? '' : ''}>
-                  <ChatMessage
-                    message={m}
-                    isStreaming={isLastAssistant}
-                    isBookmarked={m.id ? isBookmarked(m.id) : false}
-                    onToggleBookmark={toggleMessage}
-                  />
-                </div>
+                <ChatMessage
+  message={m}
+  isStreaming={isLastAssistant}
+  isBookmarked={m.id ? isBookmarked(m.id) : false}
+  onToggleBookmark={() => {
+    if (!m.id) return;
+
+    const role = String((m as any).role || '').toLowerCase();
+    const isUser = role === 'user';
+    const messageTimestamp =
+      (m as any).timestamp ? new Date((m as any).timestamp).toISOString() : undefined;
+
+    toggleBookmark(
+      {
+        id: m.id,
+        content: (m as any).content || '',
+        threadId,
+        role: (m as any).role,
+        timestamp: (m as any).timestamp,
+        isUser,
+        messageTimestamp,
+        contentPreview: ((m as any).content || '').slice(0, 1000),
+      },
+      { title: (m as any).title || '' }
+    );
+  }}
+/>
+
               </motion.div>
             );
           })}
@@ -79,7 +110,6 @@ export function MessagesList({
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.15 } }}
               exit={{ opacity: 0, y: 8, transition: { duration: 0.25 } }}
-              // No layout animation for thinking bubble either
             >
               <div className="mb-2 sm:mb-3 flex justify-start">
                 <div className="max-w-[85%] sm:max-w-[70%] rounded-2xl px-3 py-2 sm:px-4 sm:py-3 bg-white border border-slate-200 text-slate-500">

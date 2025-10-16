@@ -34,7 +34,7 @@ export default function ChatMain({
   isSidebarOpen,
   onToggleSidebar,
 }: Props) {
-  const { messages = [], isLoading = false, sendMessage, startNewChat, loadSession } = useChat() || {};
+  const { messages = [], isLoading = false, sendMessage, startNewChat, loadSession, threadId } = useChat() || {};
 
   const [message, setMessage] = useState('');
   const [isVoiceModeOpen, setIsVoiceModeOpen] = useState(false);
@@ -169,7 +169,7 @@ export default function ChatMain({
             </div>
           </div>
         ) : (
-          <MessagesList messages={messages} isLoading={isLoading} />
+          <MessagesList messages={messages} isLoading={isLoading} threadId={threadId} />
         )}
       </div>
 

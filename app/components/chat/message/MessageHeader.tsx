@@ -8,6 +8,7 @@ import {
   Copy,
   Bookmark,
   BookmarkCheck,
+  CheckCircle2,
 } from 'lucide-react';
 import { useState } from 'react';
 import type { Message } from '@/app/types/chat';
@@ -22,7 +23,11 @@ function copyToClipboard(text: string) {
   document.body.appendChild(ta);
   ta.focus();
   ta.select();
-  try { document.execCommand('copy'); } finally { document.body.removeChild(ta); }
+  try {
+    document.execCommand('copy');
+  } finally {
+    document.body.removeChild(ta);
+  }
   return Promise.resolve();
 }
 
@@ -34,7 +39,7 @@ export function MessageHeader({
   isLoading,
   onToggleTTS,
   isBookmarked,
-  onToggleBookmark,
+  onToggleBookmark, // will only be used to ADD a bookmark (no unbookmark here)
 }: {
   message: Message;
   isAssistant: boolean;
@@ -46,6 +51,10 @@ export function MessageHeader({
   onToggleBookmark?: (m: Message) => void;
 }) {
   const [copied, setCopied] = useState(false);
+
+  // local UI states for the bookmark UX
+  const [justSaved, setJustSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const ts = (() => {
     let d: any = message.timestamp;
@@ -63,6 +72,25 @@ export function MessageHeader({
     } catch {}
   };
 
+  // Header bookmark behavior:
+  // - If already bookmarked -> button disabled (shows check icon)
+  // - If not bookmarked -> click once to add; show quick "Saved" confirmation; then disable
+  const handleBookmarkOnce = async () => {
+    if (!onToggleBookmark || isBookmarked || saving || justSaved) return;
+    try {
+      setSaving(true);
+      // fire and forget; parent handles persistence
+      await Promise.resolve(onToggleBookmark(message));
+      setJustSaved(true); // show confirmation chip
+      // keep it disabled after save; no auto-hide needed, but we can fade message out later if desired
+      setTimeout(() => setJustSaved(false), 1400); // optional: short-lived visual feedback
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const bookmarkDisabled = Boolean(isBookmarked || saving || justSaved);
+
   return (
     // Align the whole row by center
     <div className="flex items-center gap-2 mb-2">
@@ -71,9 +99,7 @@ export function MessageHeader({
         <span className="text-[13px] sm:text-sm font-medium text-slate-900 leading-tight">
           {isUser ? 'You' : 'The Therapist'}
         </span>
-        <span className="text-[12px] text-slate-500 leading-tight">
-          {ts}
-        </span>
+        <span className="text-[12px] text-slate-500 leading-tight">{ts}</span>
       </div>
 
       {/* Right: action buttons with fixed, identical heights */}
@@ -115,31 +141,62 @@ export function MessageHeader({
         >
           {copied ? (
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-              <path d="M20 6L9 17l-5-5" stroke="rgb(5 150 105)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M20 6L9 17l-5-5"
+                stroke="rgb(5 150 105)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           ) : (
             <Copy className="w-4 h-4" />
           )}
         </button>
 
-        <button
-          onClick={() => onToggleBookmark?.(message)}
-          title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
-          aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
-          // inline-flex instead of hidden to show the bookmark icon on the chat header
-          className="
-            hidden items-center justify-center
-            h-7 w-7 rounded-full leading-none
-            text-slate-600 hover:text-slate-800 hover:bg-slate-100
-            transition-colors
-          "
-        >
-          {isBookmarked ? (
-            <BookmarkCheck className="w-4 h-4 text-emerald-600" />
-          ) : (
-            <Bookmark className="w-4 h-4" />
+        {/* Bookmark (one-way add from header) */}
+        <div className="relative">
+          <button
+            onClick={handleBookmarkOnce}
+            disabled={bookmarkDisabled}
+            title={isBookmarked ? 'Bookmarked' : 'Add bookmark'}
+            aria-label={isBookmarked ? 'Bookmarked' : 'Add bookmark'}
+            className={`
+              inline-flex items-center justify-center
+              h-7 w-7 rounded-full leading-none
+              transition-colors
+              ${bookmarkDisabled
+                ? 'text-slate-300 cursor-default'
+                : 'text-slate-600 hover:text-slate-800 hover:bg-slate-100'}
+            `}
+          >
+            {isBookmarked || justSaved ? (
+              <BookmarkCheck className="w-4 h-4" />
+            ) : saving ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Bookmark className="w-4 h-4" />
+            )}
+          </button>
+
+          {/* quick confirmation chip */}
+          {justSaved && (
+            <span
+              role="status"
+              aria-live="polite"
+              className="
+                absolute -right-1 top-8 select-none
+                inline-flex items-center gap-1 rounded-full px-2 py-1
+                text-[11px] font-medium
+                bg-emerald-50 text-emerald-700 border border-emerald-200
+                shadow-sm
+              "
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Saved
+            </span>
           )}
-        </button>
+        </div>
       </div>
     </div>
   );
