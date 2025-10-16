@@ -42,7 +42,7 @@ export function MessagesList({
     }
   }, []);
   // useBookmarks hook with threadId
-const { isBookmarked, toggleBookmark } = useBookmarks(threadId);
+const { isBookmarked, toggleBookmark } = useBookmarks();
 
   const endRef = useRef<HTMLDivElement>(null);
 

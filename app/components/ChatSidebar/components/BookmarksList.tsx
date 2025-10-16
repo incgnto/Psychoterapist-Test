@@ -99,7 +99,7 @@ export default function BookmarksList({ items }: { items: BookmarkItem[] }) {
           const bookmarkedTime = b.updatedAt ? new Date(b.updatedAt).toLocaleString() : '';
           const copyText = rawText;
 
-          const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/80';
+          const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
 
           const onRemove = async () => {
             if (!b.id) return;
