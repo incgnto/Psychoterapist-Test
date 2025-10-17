@@ -1,14 +1,14 @@
-'use client';
-
-import { useMemo } from 'react';
+"use client";
+import { useUser } from "@clerk/nextjs";
 
 export function useEmail() {
-  return useMemo(() => {
-    try {
-      const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-      return params.get('email') || 'guest@pj.com';
-    } catch {
-      return 'guest@pj.com';
-    }
-  }, []);
+  const { user, isSignedIn } = useUser();
+
+  const email =
+    (isSignedIn &&
+      (user?.primaryEmailAddress?.emailAddress ||
+       user?.emailAddresses?.[0]?.emailAddress)) ||
+    "guest@pj.com";
+
+  return email.toLowerCase();
 }

@@ -1,20 +1,35 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getChatSessions } from '@/lib/getChatSessions';
+// app/api/chat-history/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { getChatSessions } from "@/lib/getChatSessions";
+
+function isValidEmail(v: string) {
+  return typeof v === "string" && v.includes("@") && v.length <= 320;
+}
 
 export async function GET(request: NextRequest) {
   try {
-    const url = new URL(request.url);
-    const email = url.searchParams.get('email') || 'guest@pj.com';
+    const { userId } = await auth();  
+    let effectiveEmail: string | null = null;
 
-    // Defensive check: validate email format
-    if (typeof email !== 'string' || !email.includes('@')) {
-      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
+    if (userId) {
+      const user = await currentUser();
+      effectiveEmail =
+        user?.primaryEmailAddress?.emailAddress ||
+        user?.emailAddresses?.[0]?.emailAddress ||
+        null;
+    } else {
+      const url = new URL(request.url);
+      effectiveEmail = url.searchParams.get("email") || "guest@pj.com";
     }
 
-    const sessions = await getChatSessions(email);
+    if (!effectiveEmail || !isValidEmail(effectiveEmail)) {
+      return NextResponse.json({ error: "Invalid or missing email address" }, { status: 400 });
+    }
+
+    const sessions = await getChatSessions(effectiveEmail.toLowerCase());
     return NextResponse.json({ sessions });
   } catch (err) {
-    console.error('GET /api/chat-history error:', err);
-    return NextResponse.json({ error: 'Failed to fetch chat sessions' }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch chat sessions" }, { status: 500 });
   }
 }
